@@ -63,7 +63,7 @@ public class Mundo : GameWindow
         _circulo.Renderizar();
         
         GL.PointSize(1f);
-        float comprimentoDaLinha = 0.5f;
+        var comprimentoDaLinha = 0.5f;
         float[] linhaVertices = {
             0.0f, 0.0f,
             0.0f, comprimentoDaLinha,
@@ -71,11 +71,11 @@ public class Mundo : GameWindow
             comprimentoDaLinha, 0.0f
         };
 
-        int linhaVbo = GL.GenBuffer();
+        var linhaVbo = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, linhaVbo);
         GL.BufferData(BufferTarget.ArrayBuffer, linhaVertices.Length * sizeof(float), linhaVertices, BufferUsageHint.StaticDraw);
 
-        int linhaVao = GL.GenVertexArray();
+        var linhaVao = GL.GenVertexArray();
         GL.BindVertexArray(linhaVao);
         GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);

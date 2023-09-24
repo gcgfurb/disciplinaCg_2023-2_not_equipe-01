@@ -95,26 +95,26 @@ public class Mundo : GameWindow
             Close();
         }
         
-        if (input.IsKeyPressed(Keys.D))
-            _spline.AtualizarSpline(new Ponto4D(0.05));
-        else if (input.IsKeyPressed(Keys.E))
-            _spline.AtualizarSpline(new Ponto4D(-0.05));
-        else if (input.IsKeyPressed(Keys.C))
-            _spline.AtualizarSpline(new Ponto4D(y: 0.05));
-        else if (input.IsKeyPressed(Keys.B))
-            _spline.AtualizarSpline(new Ponto4D(y: -0.05));
-        else if (input.IsKeyPressed(Keys.Minus))
-            _spline.SplineQtdPto(-1);
-        else if (input.IsKeyPressed(Keys.Comma))
-        {
-            _spline.SplineQtdPto(1);
-        }
-        else
-        {
-            if (!input.IsKeyPressed(Keys.Space))
-                return;
-            _spline.AtualizarSpline(new Ponto4D(), true);
-        }
+        // if (input.IsKeyPressed(Keys.D))
+        //     _spline.AtualizarSpline(new Ponto4D(0.05));
+        // else if (input.IsKeyPressed(Keys.E))
+        //     _spline.AtualizarSpline(new Ponto4D(-0.05));
+        // else if (input.IsKeyPressed(Keys.C))
+        //     _spline.AtualizarSpline(new Ponto4D(y: 0.05));
+        // else if (input.IsKeyPressed(Keys.B))
+        //     _spline.AtualizarSpline(new Ponto4D(y: -0.05));
+        // else if (input.IsKeyPressed(Keys.Minus))
+        //     _spline.SplineQtdPto(-1);
+        // else if (input.IsKeyPressed(Keys.Comma))
+        // {
+        //     _spline.SplineQtdPto(1);
+        // }
+        // else
+        // {
+        //     if (!input.IsKeyPressed(Keys.Space))
+        //         return;
+        //     _spline.AtualizarSpline(new Ponto4D(), true);
+        // }
     }
 
     protected override void OnResize(ResizeEventArgs e)
