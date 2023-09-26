@@ -24,7 +24,7 @@ public abstract class Objeto
 
     public void SobreescreverPontos(List<PontoCoordenada> pontosCoordenadas)
     {
-        _pontoCoordenadas.RemoveRange(0, _pontoCoordenadas.Count);
+        _pontoCoordenadas.Clear();
         _pontoCoordenadas.AddRange(pontosCoordenadas);
     }
     
