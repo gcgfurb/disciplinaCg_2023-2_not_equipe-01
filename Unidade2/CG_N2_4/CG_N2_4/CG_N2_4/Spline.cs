@@ -17,7 +17,7 @@ public class Spline : Objeto
         AdicionarPontosSpline();
         Atualizar();
     }
-    
+
     public void AlterarPontoControle()
     {
         _pontosControle[_indexPontoSelecionado].AlterarShader(ShaderHelper.Branca);
@@ -32,24 +32,8 @@ public class Spline : Objeto
             _pontosControle[_indexPontoSelecionado].ObterPontoCoordenadaPorIndex(0) + pontoCoordenada, 0);
         _pontosControle[_indexPontoSelecionado].Atualizar();
 
-        var p0 = _pontosControle[0].ObterPontoCoordenadaPorIndex(0);
-        var p1 = _pontosControle[1].ObterPontoCoordenadaPorIndex(0);
-        var p2 = _pontosControle[2].ObterPontoCoordenadaPorIndex(0);
-        var p3 = _pontosControle[3].ObterPontoCoordenadaPorIndex(0);
-
-        var index = 0;
-        for (double t = 0; t <= 1; t += 1.0 / _quantidadeInicialPontosSpline)
-        {
-            double x = Math.Pow(1 - t, 3) * p0.X + 3 * Math.Pow(1 - t, 2) * t * p1.X +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X;
-
-            double y = Math.Pow(1 - t, 3) * p0.Y + 3 * Math.Pow(1 - t, 2) * t * p1.Y +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y;
-
-            AlterarPontoPorIndex(new PontoCoordenada(x, y), index);
-
-            index++;
-        }
+        var novosPontos = CalcularPontosSpline();
+        SobreescreverPontos(novosPontos);
 
         _poliedro.SobreescreverPontos(_pontosControle.Select(x => x.ObterPontoCoordenadaPorIndex(0)).ToList());
         _poliedro.Atualizar();
@@ -59,82 +43,61 @@ public class Spline : Objeto
     public void AdicionarPontoSpline()
     {
         _quantidadeInicialPontosSpline += 1;
-        
-        var p0 = _pontosControle[0].ObterPontoCoordenadaPorIndex(0);
-        var p1 = _pontosControle[1].ObterPontoCoordenadaPorIndex(0);
-        var p2 = _pontosControle[2].ObterPontoCoordenadaPorIndex(0);
-        var p3 = _pontosControle[3].ObterPontoCoordenadaPorIndex(0);
-
-        var novosPontos = new List<PontoCoordenada>();
-        
-        for (double t = 0; t <= 1; t += 1.0 / _quantidadeInicialPontosSpline)
-        {
-            double x = Math.Pow(1 - t, 3) * p0.X + 3 * Math.Pow(1 - t, 2) * t * p1.X +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X;
-
-            double y = Math.Pow(1 - t, 3) * p0.Y + 3 * Math.Pow(1 - t, 2) * t * p1.Y +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y;
-            
-            novosPontos.Add(new PontoCoordenada(x, y));
-        }
-        
+        var novosPontos = CalcularPontosSpline();
         SobreescreverPontos(novosPontos);
-        
         Atualizar();
     }
-    
+
     public void RetirarPontoSpline()
     {
         _quantidadeInicialPontosSpline -= 1;
-        
+        var novosPontos = CalcularPontosSpline();
+        SobreescreverPontos(novosPontos);
+        Atualizar();
+    }
+
+    private void AdicionarPontosSpline()
+    {
+        var novosPontos = CalcularPontosSpline();
+        foreach (var ponto in novosPontos)
+        {
+            AdicionarPonto(ponto);
+        }
+    }
+
+    private List<PontoCoordenada> CalcularPontosSpline()
+    {
         var p0 = _pontosControle[0].ObterPontoCoordenadaPorIndex(0);
         var p1 = _pontosControle[1].ObterPontoCoordenadaPorIndex(0);
         var p2 = _pontosControle[2].ObterPontoCoordenadaPorIndex(0);
         var p3 = _pontosControle[3].ObterPontoCoordenadaPorIndex(0);
 
-        var novosPontos = new List<PontoCoordenada>();
-        
-        for (double t = 0; t <= 1; t += 1.0 / _quantidadeInicialPontosSpline)
-        {
-            double x = Math.Pow(1 - t, 3) * p0.X + 3 * Math.Pow(1 - t, 2) * t * p1.X +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X;
+        var pontosSpline = new List<PontoCoordenada>();
 
-            double y = Math.Pow(1 - t, 3) * p0.Y + 3 * Math.Pow(1 - t, 2) * t * p1.Y +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y;
+        int numSegments = _quantidadeInicialPontosSpline;
+        for (int i = 0; i <= numSegments; i++)
+        {
+            double t = i / (double)numSegments;
             
-            novosPontos.Add(new PontoCoordenada(x, y));
+            double x = Math.Round(Math.Pow(1 - t, 3) * p0.X + 3 * Math.Pow(1 - t, 2) * t * p1.X +
+                       3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X, 2);
+
+            double y = Math.Round(Math.Pow(1 - t, 3) * p0.Y + 3 * Math.Pow(1 - t, 2) * t * p1.Y +
+                       3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y, 2);
+
+            pontosSpline.Add(new PontoCoordenada(x, y));
         }
-        
-        SobreescreverPontos(novosPontos);
-        
-        Atualizar();
+
+        return pontosSpline;
     }
-    
+
+
     private void AdicionarPoliedro()
     {
         var pontosCoordenadas = _pontosControle.Select(x =>
             x.ObterPontoCoordenadaPorIndex(0)).ToList();
         _poliedro = new Poligno(pontosCoordenadas);
         AdicionarObjetoFilho(_poliedro);
-    }
-    
-    private void AdicionarPontosSpline()
-    {
-        var p0 = _pontosControle[0].ObterPontoCoordenadaPorIndex(0);
-        var p1 = _pontosControle[1].ObterPontoCoordenadaPorIndex(0);
-        var p2 = _pontosControle[2].ObterPontoCoordenadaPorIndex(0);
-        var p3 = _pontosControle[3].ObterPontoCoordenadaPorIndex(0);
-
-        for (double t = 0; t <= 1; t += 1.0 / _quantidadeInicialPontosSpline)
-        {
-            double x = Math.Pow(1 - t, 3) * p0.X + 3 * Math.Pow(1 - t, 2) * t * p1.X +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X;
-
-            double y = Math.Pow(1 - t, 3) * p0.Y + 3 * Math.Pow(1 - t, 2) * t * p1.Y +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y;
-
-            AdicionarPonto(new PontoCoordenada(x, y));
-        }
     }
 
     private void AdicionarPontosControle()
