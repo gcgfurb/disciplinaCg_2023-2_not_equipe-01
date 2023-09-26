@@ -35,7 +35,7 @@ public class Mundo : GameWindow
     private int _vertexArrayObject;
 
     private Spline _spline;
-    
+
     private Shader _shaderVermelha;
     private Shader _shaderVerde;
     private Shader _shaderAzul;
@@ -55,7 +55,8 @@ public class Mundo : GameWindow
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
 
-        GL.BufferData(BufferTarget.ArrayBuffer, _sruEixos.Length * sizeof(float), _sruEixos, BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ArrayBuffer, _sruEixos.Length * sizeof(float), _sruEixos,
+            BufferUsageHint.StaticDraw);
 
         _vertexArrayObject = GL.GenVertexArray();
         GL.BindVertexArray(_vertexArrayObject);
@@ -76,11 +77,11 @@ public class Mundo : GameWindow
         base.OnRenderFrame(e);
 
         GL.Clear(ClearBufferMask.ColorBufferBit);
-        
+
         Sru3D();
-        
+
         _spline.Renderizar();
-        
+
         SwapBuffers();
     }
 
@@ -94,27 +95,21 @@ public class Mundo : GameWindow
         {
             Close();
         }
-        
-        // if (input.IsKeyPressed(Keys.D))
-        //     _spline.AtualizarSpline(new Ponto4D(0.05));
-        // else if (input.IsKeyPressed(Keys.E))
-        //     _spline.AtualizarSpline(new Ponto4D(-0.05));
-        // else if (input.IsKeyPressed(Keys.C))
-        //     _spline.AtualizarSpline(new Ponto4D(y: 0.05));
-        // else if (input.IsKeyPressed(Keys.B))
-        //     _spline.AtualizarSpline(new Ponto4D(y: -0.05));
-        // else if (input.IsKeyPressed(Keys.Minus))
-        //     _spline.SplineQtdPto(-1);
-        // else if (input.IsKeyPressed(Keys.Comma))
-        // {
-        //     _spline.SplineQtdPto(1);
-        // }
-        // else
-        // {
-        //     if (!input.IsKeyPressed(Keys.Space))
-        //         return;
-        //     _spline.AtualizarSpline(new Ponto4D(), true);
-        // }
+
+        if (input.IsKeyPressed(Keys.Space))
+            _spline.AlterarPontoControle();
+        else if (input.IsKeyPressed(Keys.D))
+            _spline.MoverSpline(new PontoCoordenada(0.05));
+        else if (input.IsKeyPressed(Keys.E))
+            _spline.MoverSpline(new PontoCoordenada(-0.05));
+        else if (input.IsKeyPressed(Keys.C))
+            _spline.MoverSpline(new PontoCoordenada(y: 0.05));
+        else if (input.IsKeyPressed(Keys.B))
+            _spline.MoverSpline(new PontoCoordenada(y: -0.05));
+        else if (input.IsKeyPressed(Keys.Minus))
+            _spline.RetirarPontoSpline();
+        if(input.IsKeyPressed(Keys.KeyPadAdd) || (input.IsKeyDown(Keys.LeftShift) && input.IsKeyPressed(Keys.Equal)))
+            _spline.AdicionarPontoSpline();
     }
 
     protected override void OnResize(ResizeEventArgs e)
@@ -139,7 +134,7 @@ public class Mundo : GameWindow
 
         base.OnUnload();
     }
-    
+
     private void Sru3D()
     {
         GL.BindVertexArray(_vertexArrayObject);
