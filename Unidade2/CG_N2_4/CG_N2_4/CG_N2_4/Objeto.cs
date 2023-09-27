@@ -63,6 +63,12 @@ public abstract class Objeto
         
         _objetosFilhos.ForEach(x => x.Renderizar());
     }
+
+    public void Resetar()
+    {
+        _pontoCoordenadas.Clear();
+        _objetosFilhos.Clear();
+    }
     
     protected void AdicionarObjetoFilho(Objeto objeto) => _objetosFilhos.Add(objeto);
 }

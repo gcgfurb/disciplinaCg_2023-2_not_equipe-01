@@ -12,10 +12,15 @@ public class Spline : Objeto
 
     public Spline() : base(PrimitiveType.LineStrip)
     {
-        AdicionarPontosControle();
-        AdicionarPoliedro();
-        AdicionarPontosSpline();
-        Atualizar();
+        InicializarSpline();
+    }
+
+    public new void Resetar()
+    {
+        _quantidadeInicialPontosSpline = 10;
+        _pontosControle.Clear();
+        base.Resetar();
+        InicializarSpline();
     }
 
     public void AlterarPontoControle()
@@ -56,6 +61,14 @@ public class Spline : Objeto
         Atualizar();
     }
 
+    private void InicializarSpline()
+    {
+        AdicionarPontosControle();
+        AdicionarPoliedro();
+        AdicionarPontosSpline();
+        Atualizar();
+    }
+
     private void AdicionarPontosSpline()
     {
         var novosPontos = CalcularPontosSpline();
@@ -78,12 +91,12 @@ public class Spline : Objeto
         for (int i = 0; i <= numSegments; i++)
         {
             double t = i / (double)numSegments;
-            
+
             double x = Math.Round(Math.Pow(1 - t, 3) * p0.X + 3 * Math.Pow(1 - t, 2) * t * p1.X +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X, 2);
+                                  3 * (1 - t) * Math.Pow(t, 2) * p2.X + Math.Pow(t, 3) * p3.X, 2);
 
             double y = Math.Round(Math.Pow(1 - t, 3) * p0.Y + 3 * Math.Pow(1 - t, 2) * t * p1.Y +
-                       3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y, 2);
+                                  3 * (1 - t) * Math.Pow(t, 2) * p2.Y + Math.Pow(t, 3) * p3.Y, 2);
 
             pontosSpline.Add(new PontoCoordenada(x, y));
         }

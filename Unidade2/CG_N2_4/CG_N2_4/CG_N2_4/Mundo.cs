@@ -108,8 +108,12 @@ public class Mundo : GameWindow
             _spline.MoverSpline(new PontoCoordenada(y: -0.05));
         else if (input.IsKeyPressed(Keys.Minus))
             _spline.RetirarPontoSpline();
-        if(input.IsKeyPressed(Keys.KeyPadAdd) || (input.IsKeyDown(Keys.LeftShift) && input.IsKeyPressed(Keys.Equal)))
+        else if (input.IsKeyPressed(Keys.KeyPadAdd) ||
+                 (input.IsKeyDown(Keys.LeftShift) &&
+                  input.IsKeyPressed(Keys.Equal)))
             _spline.AdicionarPontoSpline();
+        else if (input.IsKeyPressed(Keys.R))
+            _spline.Resetar();
     }
 
     protected override void OnResize(ResizeEventArgs e)
