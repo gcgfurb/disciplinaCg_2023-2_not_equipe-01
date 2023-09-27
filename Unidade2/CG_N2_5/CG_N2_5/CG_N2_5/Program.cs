@@ -6,7 +6,7 @@ using OpenTK.Windowing.Desktop;
 var nativeWindowSettings = new NativeWindowSettings
 {
     Size = new Vector2i(800, 800),
-    Title = "CG_N2_1",
+    Title = "CG_N2_5",
     // This is needed to run on macos
     Flags = ContextFlags.ForwardCompatible,
 };

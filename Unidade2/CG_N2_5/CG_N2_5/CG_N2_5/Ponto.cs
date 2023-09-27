@@ -1,7 +1,6 @@
-﻿using CG_N2_5;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 
-namespace CG_N2_4;
+namespace CG_N2_5;
 
 public class Ponto : Objeto
 {

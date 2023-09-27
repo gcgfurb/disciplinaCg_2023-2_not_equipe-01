@@ -34,7 +34,10 @@ public class Mundo : GameWindow
 
     private int _vertexArrayObject;
 
-    private Spline _spline;
+    private Ponto _pontoCentro;
+    private Circulo _circuloMenor;
+    private Circulo _circuloMaior;
+    private Retangulo _bboxInterna;
 
     private Shader _shaderVermelha;
     private Shader _shaderVerde;
@@ -65,11 +68,20 @@ public class Mundo : GameWindow
 
         GL.EnableVertexAttribArray(0);
 
-        _spline = new Spline();
+        var nmueroCirculoSimetrico = Matematica.GerarPtosCirculoSimetrico(0.3);
+        
+        _pontoCentro = new Ponto(new PontoCoordenada(0.3, 0.3));
+        _circuloMenor = new Circulo(_pontoCentro.ObterPontoCoordenadaPorIndex(0), 0.1);
+        _circuloMaior = new Circulo(_pontoCentro.ObterPontoCoordenadaPorIndex(0), 0.3);
+        _bboxInterna = new Retangulo(
+            new PontoCoordenada(-nmueroCirculoSimetrico, -nmueroCirculoSimetrico) +
+            _pontoCentro.ObterPontoCoordenadaPorIndex(0),
+            new PontoCoordenada(nmueroCirculoSimetrico, nmueroCirculoSimetrico) +
+            _pontoCentro.ObterPontoCoordenadaPorIndex(0));
 
-        _shaderVermelha = new Shader("Shaders/shader.vert", "Shaders/shaderVermelha.frag");
-        _shaderVerde = new Shader("Shaders/shader.vert", "Shaders/shaderVerde.frag");
-        _shaderAzul = new Shader("Shaders/shader.vert", "Shaders/shaderAzul.frag");
+        _shaderVermelha = ShaderHelper.Vermelho;
+        _shaderVerde = ShaderHelper.Verde;
+        _shaderAzul = ShaderHelper.Azul;
     }
 
     protected override void OnRenderFrame(FrameEventArgs e)
@@ -80,7 +92,10 @@ public class Mundo : GameWindow
 
         Sru3D();
 
-        _spline.Renderizar();
+        _pontoCentro.Renderizar();
+        _circuloMenor.Renderizar();
+        _bboxInterna.Renderizar();
+        _circuloMaior.Renderizar();
 
         SwapBuffers();
     }
@@ -95,25 +110,6 @@ public class Mundo : GameWindow
         {
             Close();
         }
-
-        if (input.IsKeyPressed(Keys.Space))
-            _spline.AlterarPontoControle();
-        else if (input.IsKeyPressed(Keys.D))
-            _spline.MoverSpline(new PontoCoordenada(0.05));
-        else if (input.IsKeyPressed(Keys.E))
-            _spline.MoverSpline(new PontoCoordenada(-0.05));
-        else if (input.IsKeyPressed(Keys.C))
-            _spline.MoverSpline(new PontoCoordenada(y: 0.05));
-        else if (input.IsKeyPressed(Keys.B))
-            _spline.MoverSpline(new PontoCoordenada(y: -0.05));
-        else if (input.IsKeyPressed(Keys.Minus))
-            _spline.RetirarPontoSpline();
-        else if (input.IsKeyPressed(Keys.KeyPadAdd) ||
-                 (input.IsKeyDown(Keys.LeftShift) &&
-                  input.IsKeyPressed(Keys.Equal)))
-            _spline.AdicionarPontoSpline();
-        else if (input.IsKeyPressed(Keys.R))
-            _spline.Resetar();
     }
 
     protected override void OnResize(ResizeEventArgs e)
