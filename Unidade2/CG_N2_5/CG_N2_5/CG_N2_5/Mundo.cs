@@ -69,7 +69,7 @@ public class Mundo : GameWindow
         GL.EnableVertexAttribArray(0);
 
         var nmueroCirculoSimetrico = Matematica.GerarPtosCirculoSimetrico(0.3);
-        
+
         _pontoCentro = new Ponto(new PontoCoordenada(0.3, 0.3));
         _circuloMenor = new Circulo(_pontoCentro.ObterPontoCoordenadaPorIndex(0), 0.1);
         _circuloMaior = new Circulo(_pontoCentro.ObterPontoCoordenadaPorIndex(0), 0.3);
@@ -105,12 +105,55 @@ public class Mundo : GameWindow
         base.OnUpdateFrame(e);
 
         var input = KeyboardState;
+        var pontoAtual = _pontoCentro.ObterPontoCoordenadaPorIndex(0);
+        double distanciaParaPercorrer = 0.0005;
 
         if (input.IsKeyDown(Keys.Escape))
         {
             Close();
         }
+        else
+        {
+            var delta = new PontoCoordenada(0, 0);
+
+            if (input.IsKeyDown(Keys.D)) delta.X = distanciaParaPercorrer;
+            else if (input.IsKeyDown(Keys.E)) delta.X = -distanciaParaPercorrer;
+            else if (input.IsKeyDown(Keys.C)) delta.Y = distanciaParaPercorrer;
+            else if (input.IsKeyDown(Keys.B)) delta.Y = -distanciaParaPercorrer;
+
+            MoverPonto(ref pontoAtual, delta);
+        }
     }
+
+    private void MoverPonto(ref PontoCoordenada pontoAtual, PontoCoordenada delta)
+    {
+        pontoAtual.X += delta.X;
+        pontoAtual.Y += delta.Y;
+
+        if (Matematica.Dentro(_bboxInterna.BBox, pontoAtual))
+        {
+            _bboxInterna.PrimitiveType = PrimitiveType.LineLoop;
+            _pontoCentro.AlterarPontoPorIndex(pontoAtual, 0);
+            _pontoCentro.Atualizar();
+            _circuloMenor.Atualizar(pontoAtual);
+        }
+        else
+        {
+            _bboxInterna.PrimitiveType = PrimitiveType.Points;
+            if (Matematica.DistanciaQuadrado(pontoAtual, new PontoCoordenada(0.3, 0.3)) <= 0.09)
+            {
+                _pontoCentro.AlterarPontoPorIndex(pontoAtual, 0);
+                _pontoCentro.Atualizar();
+                _circuloMenor.Atualizar(pontoAtual);
+            }
+            else
+            {
+                pontoAtual.X -= delta.X;
+                pontoAtual.Y -= delta.Y;
+            }
+        }
+    }
+
 
     protected override void OnResize(ResizeEventArgs e)
     {

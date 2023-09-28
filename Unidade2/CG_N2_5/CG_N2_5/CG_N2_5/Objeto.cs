@@ -7,16 +7,17 @@ public abstract class Objeto
 {
     private int _vertexBufferObject;
     private int _vertexArrayObject;
-    private readonly PrimitiveType _primitiveType;
+    public PrimitiveType PrimitiveType;
     public readonly float PrimitiveSize;
     private float[] _vertex;
     private readonly List<PontoCoordenada> _pontoCoordenadas = new();
     private Shader _shader = ShaderHelper.Branca;
     private readonly List<Objeto> _objetosFilhos = new();
+    public readonly BBox BBox = new();
 
     protected Objeto(PrimitiveType primitiveType, float primitiveSize = 10)
     {
-        _primitiveType = primitiveType;
+        PrimitiveType = primitiveType;
         PrimitiveSize = primitiveSize;
     }
     
@@ -46,7 +47,8 @@ public abstract class Objeto
             _vertex[i + 2] = (float)_pontoCoordenadas[pontoLista].Z;
             pontoLista++;
         }
-
+        
+        BBox.Atualizar(_pontoCoordenadas);
         _vertexBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
         GL.BufferData(BufferTarget.ArrayBuffer, _vertex.Length * 4, _vertex, BufferUsageHint.StaticDraw);
@@ -61,7 +63,7 @@ public abstract class Objeto
         GL.PointSize(PrimitiveSize);
         GL.BindVertexArray(_vertexArrayObject);
         _shader.Use();
-        GL.DrawArrays(_primitiveType, 0, _pontoCoordenadas.Count);
+        GL.DrawArrays(PrimitiveType, 0, _pontoCoordenadas.Count);
         
         _objetosFilhos.ForEach(x => x.Renderizar());
     }
