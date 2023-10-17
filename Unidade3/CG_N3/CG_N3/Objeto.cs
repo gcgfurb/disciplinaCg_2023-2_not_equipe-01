@@ -40,19 +40,11 @@ public class Objeto
         Atualizar();
     }
 
-    public void SobreescreverPontos(List<PontoCoordenada> pontosCoordenadas)
-    {
-        _pontoCoordenadas.Clear();
-        _pontoCoordenadas.AddRange(pontosCoordenadas);
-    }
-
     public void AlterarPontoPorIndex(PontoCoordenada pontoCoordenada, int index)
     {
         _pontoCoordenadas[index] = pontoCoordenada;
         Atualizar();
     }
-
-    public PontoCoordenada ObterPontoCoordenadaPorIndex(int index) => _pontoCoordenadas[index];
 
     public void Atualizar()
     {
@@ -125,36 +117,41 @@ public class Objeto
             Atualizar();
     }
 
-    public bool ScanLine(PontoCoordenada pontoCoordenada, ref Poligno? objetoSelecionado)
+    public void ScanLine(PontoCoordenada pontoCoordenada, ref Poligno? objetoSelecionado)
     {
         if (_bBox.Dentro(pontoCoordenada))
         {
-            ushort num = 0;
-            if (_pontoCoordenadas.Count >= 2)
-            {
-                for (var index = 0; index < _pontoCoordenadas.Count - 1; ++index)
-                {
-                    if (Matematica.ScanLine(pontoCoordenada, _matriz.MultiplicarPonto(_pontoCoordenadas[index]),
-                            _matriz.MultiplicarPonto(_pontoCoordenadas[index + 1])))
-                        ++num;
-                }
-
-                if (Matematica.ScanLine(pontoCoordenada, _matriz.MultiplicarPonto(_pontoCoordenadas[^1]),
-                        _matriz.MultiplicarPonto(_pontoCoordenadas[0])))
-                    ++num;
-            }
-
+            var num = CountIntersections(pontoCoordenada);
+            
             if (num % 2 != 0)
             {
                 objetoSelecionado = (Poligno)this;
-                return true;
+                return;
             }
         }
 
         foreach (var objeto in _objetosFilhos)
             objeto.ScanLine(pontoCoordenada, ref objetoSelecionado);
+    }
+    
+    private ushort CountIntersections(PontoCoordenada pontoCoordenada)
+    {
+        ushort num = 0;
+        if (_pontoCoordenadas.Count >= 2)
+        {
+            for (var index = 0; index < _pontoCoordenadas.Count - 1; ++index)
+            {
+                if (Matematica.ScanLine(pontoCoordenada, _matriz.MultiplicarPonto(_pontoCoordenadas[index]),
+                        _matriz.MultiplicarPonto(_pontoCoordenadas[index + 1])))
+                    ++num;
+            }
 
-        return false;
+            if (Matematica.ScanLine(pontoCoordenada, _matriz.MultiplicarPonto(_pontoCoordenadas[^1]),
+                    _matriz.MultiplicarPonto(_pontoCoordenadas[0])))
+                ++num;
+        }
+
+        return num;
     }
 
     public void MatrizTranslacaoXyz(double tx, double ty, double tz)
@@ -178,7 +175,7 @@ public class Objeto
         _matriz = _matriz.MultiplicarMatriz(_matrizGlobal);
         Atualizar();
     }
-    
+
     public void MatrizRotacaoZbBox(double angulo)
     {
         _matrizGlobal.AtribuirIdentidade();
@@ -210,6 +207,7 @@ public class Objeto
                 Console.WriteLine("opção de eixoRotacao: ERRADA!");
                 break;
         }
+
         Atualizar();
     }
 
@@ -233,5 +231,5 @@ public class Objeto
         GL.DeleteProgram(_shader.Handle);
     }
 
-    public void AdicionarObjetoFilho(Objeto objeto) => _objetosFilhos.Add(objeto);
+    private void AdicionarObjetoFilho(Objeto objeto) => _objetosFilhos.Add(objeto);
 }

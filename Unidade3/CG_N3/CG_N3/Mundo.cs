@@ -99,73 +99,73 @@ public class Mundo : GameWindow
     {
         base.OnUpdateFrame(e);
 
-        var keyboardInput = KeyboardState;
-        var mouseInput = MouseState;
-
-        if (keyboardInput.IsKeyDown(Keys.Escape))
+        if (KeyboardState.IsKeyDown(Keys.Escape))
         {
             Close();
         }
-        else if (keyboardInput.IsKeyPressed(Keys.R) && _polignoSelecionado is not null)
-            _polignoSelecionado.AlterarShader(_shaderVermelha);
-        else if (keyboardInput.IsKeyPressed(Keys.G) && _polignoSelecionado is not null)
-            _polignoSelecionado.AlterarShader(_shaderVerde);
-        else if (keyboardInput.IsKeyPressed(Keys.B) && _polignoSelecionado is not null)
-            _polignoSelecionado.AlterarShader(_shaderAzul);
-        else if (keyboardInput.IsKeyPressed(Keys.D) && _polignoSelecionado is not null)
+        else if (_polignoSelecionado is not null)
         {
-            _polignoSelecionado.Remover();
-            _polignoSelecionado = null;
+            if (KeyboardState.IsKeyPressed(Keys.R))
+                _polignoSelecionado.AlterarShader(_shaderVermelha);
+            else if (KeyboardState.IsKeyPressed(Keys.G))
+                _polignoSelecionado.AlterarShader(_shaderVerde);
+            else if (KeyboardState.IsKeyPressed(Keys.B))
+                _polignoSelecionado.AlterarShader(_shaderAzul);
+            else if (KeyboardState.IsKeyPressed(Keys.D))
+            {
+                _polignoSelecionado.Remover();
+                _polignoSelecionado = null;
+            }
+            else if (KeyboardState.IsKeyPressed(Keys.E))
+                _polignoSelecionado.RemoverPontoMaisProximo(
+                    Utilitario.NDC_TelaSRU(Size.X, Size.Y,
+                        new PontoCoordenada(MousePosition.X, MousePosition.Y)));
+            else if (KeyboardState.IsKeyPressed(Keys.P))
+            {
+                _polignoSelecionado.PrimitiveType = _polignoSelecionado.PrimitiveType != PrimitiveType.LineLoop
+                    ? PrimitiveType.LineLoop
+                    : PrimitiveType.LineStrip;
+                _polignoSelecionado.Atualizar();
+            }
+            else if (KeyboardState.IsKeyDown(Keys.V))
+            {
+                var pontoCoordenada =
+                    Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(MousePosition.X, MousePosition.Y));
+                var posicao = _polignoSelecionado.ObterPontoMaisPerto(pontoCoordenada);
+                _polignoSelecionado.AlterarPontoPorIndex(pontoCoordenada, posicao);
+            }
+            else if (KeyboardState.IsKeyPressed(Keys.Left))
+                _polignoSelecionado.MatrizTranslacaoXyz(-0.05, 0.0, 0.0);
+            else if (KeyboardState.IsKeyPressed(Keys.Right))
+                _polignoSelecionado.MatrizTranslacaoXyz(0.05, 0.0, 0.0);
+            else if (KeyboardState.IsKeyPressed(Keys.Up))
+                _polignoSelecionado.MatrizTranslacaoXyz(0.0, 0.05, 0.0);
+            else if (KeyboardState.IsKeyPressed(Keys.Down))
+                _polignoSelecionado.MatrizTranslacaoXyz(0.0, -0.05, 0.0);
+            else if (KeyboardState.IsKeyPressed(Keys.Home))
+                _polignoSelecionado.MatrizEscalaXyzbBox(0.5, 0.5, 0.5);
+            else if (KeyboardState.IsKeyPressed(Keys.End))
+                _polignoSelecionado.MatrizEscalaXyzbBox(2.0, 2.0, 2.0);
+            else if (KeyboardState.IsKeyPressed(Keys.D3))
+                _polignoSelecionado.MatrizRotacaoZbBox(10.0);
+            else if (KeyboardState.IsKeyPressed(Keys.D4))
+                _polignoSelecionado.MatrizRotacaoZbBox(-10.0);
         }
-        else if (keyboardInput.IsKeyPressed(Keys.E) && _polignoSelecionado is not null)
-            _polignoSelecionado.RemoverPontoMaisProximo(
-                Utilitario.NDC_TelaSRU(Size.X, Size.Y,
-                    new PontoCoordenada(MousePosition.X, MousePosition.Y)));
-        else if (keyboardInput.IsKeyPressed(Keys.P) && _polignoSelecionado is not null)
-        {
-            _polignoSelecionado.PrimitiveType = _polignoSelecionado.PrimitiveType != PrimitiveType.LineLoop
-                ? PrimitiveType.LineLoop
-                : PrimitiveType.LineStrip;
-            _polignoSelecionado.Atualizar();
-        }
-        else if (keyboardInput.IsKeyDown(Keys.V) && _polignoSelecionado is not null)
-        {
-            var pontoCoordenada =
-                Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(MousePosition.X, MousePosition.Y));
-            var posicao = _polignoSelecionado.ObterPontoMaisPerto(pontoCoordenada);
-            _polignoSelecionado.AlterarPontoPorIndex(pontoCoordenada, posicao);
-        }
-        else if (keyboardInput.IsKeyPressed(Keys.Left) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizTranslacaoXyz(-0.05, 0.0, 0.0);
-        else if (keyboardInput.IsKeyPressed(Keys.Right) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizTranslacaoXyz(0.05, 0.0, 0.0);
-        else if (keyboardInput.IsKeyPressed(Keys.Up) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizTranslacaoXyz(0.0, 0.05, 0.0);
-        else if (keyboardInput.IsKeyPressed(Keys.Down) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizTranslacaoXyz(0.0, -0.05, 0.0);
-        else if (keyboardInput.IsKeyPressed(Keys.Home) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizEscalaXyzbBox(0.5, 0.5, 0.5);
-        else if (keyboardInput.IsKeyPressed(Keys.End) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizEscalaXyzbBox(2.0, 2.0, 2.0);
-        else if (keyboardInput.IsKeyPressed(Keys.D3) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizRotacaoZbBox(10.0);
-        else if (keyboardInput.IsKeyPressed(Keys.D4) && _polignoSelecionado is not null)
-            _polignoSelecionado.MatrizRotacaoZbBox(-10.0);
-        else if (keyboardInput.IsKeyPressed(Keys.Enter) && _poligno is not null)
+        else if (KeyboardState.IsKeyPressed(Keys.Enter) && _poligno is not null)
         {
             _polignoSelecionado = _poligno;
             _poligno = null;
         }
-        else if (mouseInput.IsButtonPressed(MouseButton.Left))
+        else if (MouseState.IsButtonPressed(MouseButton.Left))
         {
             var pontoCoordenada =
                 Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(MousePosition.X, MousePosition.Y));
             _polignoSelecionado = null;
             _objectPooling.ScanLine(pontoCoordenada, ref _polignoSelecionado);
         }
-        else if (mouseInput.IsButtonPressed(MouseButton.Right))
+        else if (MouseState.IsButtonPressed(MouseButton.Right))
         {
-            var mousePosition = Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(mouseInput.X, mouseInput.Y));
+            var mousePosition = Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(MouseState.X, MouseState.Y));
             var pontosPoligono = new List<PontoCoordenada> { mousePosition, mousePosition };
 
             if (_poligno is null)

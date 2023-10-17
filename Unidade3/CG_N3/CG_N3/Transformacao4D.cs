@@ -4,26 +4,14 @@ namespace CG_N3;
 
 public class Transformacao4D
 {
-    public static readonly double DegToRad = Math.PI / 180.0;
+    public const double DegToRad = Math.PI / 180.0;
 
     private readonly double[] _matriz =
     {
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0
     };
 
     public void AtribuirTranslacao(double tx, double ty, double tz)
