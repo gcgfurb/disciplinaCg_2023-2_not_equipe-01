@@ -151,19 +151,14 @@ public class Mundo : GameWindow
             else if (KeyboardState.IsKeyPressed(Keys.D4))
                 _polignoSelecionado.MatrizRotacaoZbBox(-10.0);
         }
-        else if (KeyboardState.IsKeyPressed(Keys.Enter) && _poligno is not null)
+
+        if (KeyboardState.IsKeyPressed(Keys.Enter) && _poligno is not null)
         {
             _polignoSelecionado = _poligno;
             _poligno = null;
         }
-        else if (MouseState.IsButtonPressed(MouseButton.Left))
-        {
-            var pontoCoordenada =
-                Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(MousePosition.X, MousePosition.Y));
-            _polignoSelecionado = null;
-            _objectPooling.ScanLine(pontoCoordenada, ref _polignoSelecionado);
-        }
-        else if (MouseState.IsButtonPressed(MouseButton.Right))
+
+        if (MouseState.IsButtonPressed(MouseButton.Right))
         {
             var mousePosition = Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(MouseState.X, MouseState.Y));
             var pontosPoligono = new List<PontoCoordenada> { mousePosition, mousePosition };
@@ -180,6 +175,14 @@ public class Mundo : GameWindow
             }
             else
                 _poligno.AdicionarPonto(mousePosition);
+        }
+
+        if (!MouseState.IsButtonPressed(MouseButton.Left)) return;
+        {
+            var pontoCoordenada =
+                Utilitario.NDC_TelaSRU(Size.X, Size.Y, new PontoCoordenada(MousePosition.X, MousePosition.Y));
+            _polignoSelecionado = null;
+            _objectPooling.ScanLine(pontoCoordenada, ref _polignoSelecionado);
         }
     }
 
