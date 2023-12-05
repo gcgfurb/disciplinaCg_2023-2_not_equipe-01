@@ -50,9 +50,9 @@ public class Mundo : GameWindow
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-        _orbitAngle += 1.5f * (float)e.Time;
+        _orbitAngle += 0.5f * (float)e.Time;
 
-        _spinAngle += 2.0f * (float)e.Time;
+        _spinAngle += 0.5f * (float)e.Time;
 
         const float orbitRadius = 3.0f;
 
