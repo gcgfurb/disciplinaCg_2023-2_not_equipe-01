@@ -4,7 +4,7 @@ using OpenTK.Mathematics;
 
 namespace CG_N4_V2.Lights;
 
-public class BasicLight : Cubo
+public class SpotLight : Cubo
 {
     private readonly float[] _vertices =
     {
@@ -52,11 +52,14 @@ public class BasicLight : Cubo
         -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
     };
 
-    public BasicLight()
-    {
-        Shader = new Shader("Shaders/BasicLighting/shader.vert", "Shaders/BasicLighting/lighting.frag");
+    private Texture _diffuseMap;
+    private Texture _specularMap;
 
-        for (var i = 0; i < _vertices.Length; i += 6)
+    public SpotLight()
+    {
+        Shader = new Shader("Shaders/SpotLight/shader.vert", "Shaders/SpotLight/lighting.frag");
+
+        for (var i = 0; i < _vertices.Length; i += 8)
         {
             AdicionarPonto(new PontoCoordenada(
                 _vertices[i],
@@ -64,18 +67,24 @@ public class BasicLight : Cubo
                 _vertices[i + 2],
                 _vertices[i + 3],
                 _vertices[i + 4],
-                _vertices[i + 5]));
+                _vertices[i + 5],
+                _vertices[i + 6],
+                _vertices[i + 7]
+            ));
         }
-        
+
+        _diffuseMap = Texture.LoadFromFile("Resources/container2.png");
+        _specularMap = Texture.LoadFromFile("Resources/container2_specular.png");
+
         Atualizar();
     }
-    
+
     public sealed override void Atualizar()
     {
-        Vertex = new float[PontoCoordenadas.Count * 6];
+        Vertex = new float[PontoCoordenadas.Count * 8];
 
         var pontoLista = 0;
-        for (var i = 0; i < Vertex.Length; i += 6)
+        for (var i = 0; i < Vertex.Length; i += 8)
         {
             Vertex[i] = (float)PontoCoordenadas[pontoLista].X;
             Vertex[i + 1] = (float)PontoCoordenadas[pontoLista].Y;
@@ -84,6 +93,9 @@ public class BasicLight : Cubo
             Vertex[i + 3] = (float)PontoCoordenadas[pontoLista].NormalX;
             Vertex[i + 4] = (float)PontoCoordenadas[pontoLista].NormalY;
             Vertex[i + 5] = (float)PontoCoordenadas[pontoLista].NormalZ;
+
+            Vertex[i + 6] = (float)PontoCoordenadas[pontoLista].TextureX;
+            Vertex[i + 7] = (float)PontoCoordenadas[pontoLista].TextureY;
             pontoLista++;
         }
 
@@ -97,12 +109,17 @@ public class BasicLight : Cubo
 
         var positionLocation = Shader.GetAttribLocation("aPos");
         GL.EnableVertexAttribArray(positionLocation);
-        GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+        GL.VertexAttribPointer(positionLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
 
         var normalLocation = Shader.GetAttribLocation("aNormal");
         GL.EnableVertexAttribArray(normalLocation);
-        GL.VertexAttribPointer(normalLocation, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float),
+        GL.VertexAttribPointer(normalLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float),
             3 * sizeof(float));
+
+        var texCoordLocation = Shader.GetAttribLocation("aTexCoords");
+        GL.EnableVertexAttribArray(texCoordLocation);
+        GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float),
+            6 * sizeof(float));
     }
 
     public override void Renderizar(Transformacao4D matrizGrafo, Camera camera)
@@ -111,6 +128,8 @@ public class BasicLight : Cubo
 
         GL.BindVertexArray(VertexArrayObject);
 
+        _diffuseMap.Use(TextureUnit.Texture0);
+        _specularMap.Use(TextureUnit.Texture1);
         Shader.Use();
 
         matrizGrafo = matrizGrafo.MultiplicarMatriz(Matriz);
@@ -118,11 +137,23 @@ public class BasicLight : Cubo
         Shader.SetMatrix4("model", matrizGrafo.ObterDadosOpenTk());
         Shader.SetMatrix4("view", camera.GetViewMatrix());
         Shader.SetMatrix4("projection", camera.GetProjectionMatrix());
-
-        Shader.SetVector3("objectColor", new Vector3(1.0f, 0.5f, 0.31f));
-        Shader.SetVector3("lightColor", new Vector3(1.0f, 1.0f, 1.0f));
-        Shader.SetVector3("lightPos", new Vector3(1.2f, 1.0f, 2.0f));
         Shader.SetVector3("viewPos", camera.Position);
+
+        Shader.SetInt("material.diffuse", 0);
+        Shader.SetInt("material.specular", 1);
+        Shader.SetVector3("material.specular", new Vector3(0.5f, 0.5f, 0.5f));
+        Shader.SetFloat("material.shininess", 32.0f);
+
+        Shader.SetVector3("light.position", camera.Position);
+        Shader.SetVector3("light.direction", camera.Front);
+        Shader.SetFloat("light.cutOff", MathF.Cos(MathHelper.DegreesToRadians(12.5f)));
+        Shader.SetFloat("light.outerCutOff", MathF.Cos(MathHelper.DegreesToRadians(17.5f)));
+        Shader.SetFloat("light.constant", 1.0f);
+        Shader.SetFloat("light.linear", 0.09f);
+        Shader.SetFloat("light.quadratic", 0.032f);
+        Shader.SetVector3("light.ambient", new Vector3(0.2f));
+        Shader.SetVector3("light.diffuse", new Vector3(0.5f));
+        Shader.SetVector3("light.specular", new Vector3(1.0f));
 
         GL.DrawArrays(PrimitiveType, 0, PontoCoordenadas.Count);
     }

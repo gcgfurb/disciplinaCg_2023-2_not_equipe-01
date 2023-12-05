@@ -131,6 +131,18 @@ public class Mundo : GameWindow
         {
             _principalCube = new DirectionalLights();
         }
+        else if (KeyboardState.IsKeyPressed(Keys.D4))
+        {
+            _principalCube = new PointLights();
+        }
+        else if (KeyboardState.IsKeyPressed(Keys.D5))
+        {
+            _principalCube = new SpotLight();
+        }
+        else if (KeyboardState.IsKeyPressed(Keys.D6))
+        {
+            _principalCube = new MultipleLights();
+        }
 
         if (_firstMove)
         {
