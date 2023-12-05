@@ -1,17 +1,24 @@
 #version 330 core
 out vec4 FragColor;
 
+uniform sampler2D texture0; // Primeira textura
+uniform sampler2D texture1; // Segunda textura
+
 //In order to calculate some basic lighting we need a few things per model basis, and a few things per fragment basis:
-uniform vec3 objectColor; //The color of the object.
 uniform vec3 lightColor; //The color of the light.
 uniform vec3 lightPos; //The position of the light.
 uniform vec3 viewPos; //The position of the view and/or of the player.
 
 in vec3 Normal; //The normal of the fragment is calculated in the vertex shader.
 in vec3 FragPos; //The fragment position.
+in vec2 TexCoords; // Coordenadas de textura
 
 void main()
 {
+    vec3 texColor1 = vec3(texture(texture0, TexCoords));
+    vec3 texColor2 = vec3(texture(texture1, TexCoords));
+    vec3 outputColor = mix(texColor1, texColor2, 0.2);
+    
     //The ambient color is the color where the light does not directly hit the object.
     //You can think of it as an underlying tone throughout the object. Or the light coming from the scene/the sky (not the sun).
     float ambientStrength = 0.1;
@@ -37,7 +44,7 @@ void main()
 
     //At last we add all the light components together and multiply with the color of the object. Then we set the color
     //and makes sure the alpha value is 1
-    vec3 result = (ambient + diffuse + specular) * objectColor;
+    vec3 result = (ambient + diffuse + specular) * outputColor;
     FragColor = vec4(result, 1.0);
     
     //Note we still use the light color * object color from the last tutorial.

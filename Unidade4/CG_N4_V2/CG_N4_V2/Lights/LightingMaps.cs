@@ -54,8 +54,7 @@ public class LightingMaps : Cubo
 
     private Texture _diffuseMap;
     private Texture _specularMap;
-
-
+    
     public LightingMaps()
     {
         Shader = new Shader("Shaders/LightingMaps/shader.vert", "Shaders/LightingMaps/lighting.frag");
@@ -74,7 +73,7 @@ public class LightingMaps : Cubo
             ));
         }
 
-        _diffuseMap = Texture.LoadFromFile("Resources/container2.png");
+        _diffuseMap = Texture.LoadFromFile("Resources/image.png");
         _specularMap = Texture.LoadFromFile("Resources/container2_specular.png");
 
         Atualizar();
@@ -99,9 +98,7 @@ public class LightingMaps : Cubo
             Vertex[i + 7] = (float)PontoCoordenadas[pontoLista].TextureY;
             pontoLista++;
         }
-
-        GL.PointSize(PrimitiveSize);
-
+        
         VertexBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
         GL.BufferData(BufferTarget.ArrayBuffer, Vertex.Length * sizeof(float), Vertex, BufferUsageHint.StaticDraw);
@@ -125,8 +122,6 @@ public class LightingMaps : Cubo
 
     public override void Renderizar(Transformacao4D matrizGrafo, Camera camera)
     {
-        GL.PointSize(PrimitiveSize);
-
         GL.BindVertexArray(VertexArrayObject);
 
         _diffuseMap.Use(TextureUnit.Texture0);

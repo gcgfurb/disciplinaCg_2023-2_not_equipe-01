@@ -119,7 +119,11 @@ public class Mundo : GameWindow
             _camera.Position -= _camera.Up * cameraSpeed * (float)e.Time; // Down
         }
 
-        if (KeyboardState.IsKeyPressed(Keys.D1))
+        if (KeyboardState.IsKeyPressed(Keys.D0))
+        {
+            _principalCube = new NoneLight();
+        }
+        else if (KeyboardState.IsKeyPressed(Keys.D1))
         {
             _principalCube = new BasicLight();
         }

@@ -73,7 +73,7 @@ public class PointLights : Cubo
             ));
         }
 
-        _diffuseMap = Texture.LoadFromFile("Resources/container2.png");
+        _diffuseMap = Texture.LoadFromFile("Resources/image.png");
         _specularMap = Texture.LoadFromFile("Resources/container2_specular.png");
 
         Atualizar();
@@ -99,7 +99,6 @@ public class PointLights : Cubo
             pontoLista++;
         }
 
-        GL.PointSize(PrimitiveSize);
 
         VertexBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
@@ -124,8 +123,6 @@ public class PointLights : Cubo
 
     public override void Renderizar(Transformacao4D matrizGrafo, Camera camera)
     {
-        GL.PointSize(PrimitiveSize);
-
         GL.BindVertexArray(VertexArrayObject);
 
         _diffuseMap.Use(TextureUnit.Texture0);

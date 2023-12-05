@@ -79,7 +79,7 @@ public class RotationalCube : Cubo
             pontoLista++;
         }
 
-        GL.PointSize(PrimitiveSize);
+        
 
         VertexBufferObject = GL.GenBuffer();
         GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
@@ -94,7 +94,7 @@ public class RotationalCube : Cubo
 
     public override void Renderizar(Transformacao4D matrizGrafo, Camera camera)
     {
-        GL.PointSize(PrimitiveSize);
+        
 
         GL.BindVertexArray(VertexArrayObject);
 

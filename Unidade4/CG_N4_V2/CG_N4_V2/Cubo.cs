@@ -8,15 +8,14 @@ public class Cubo
 {
     protected int VertexBufferObject;
     protected int VertexArrayObject;
-    protected PrimitiveType PrimitiveType = PrimitiveType.TriangleFan;
-    protected readonly float PrimitiveSize = 5;
+    protected PrimitiveType PrimitiveType = PrimitiveType.Triangles;
     protected float[] Vertex;
     protected readonly List<PontoCoordenada> PontoCoordenadas = new();
     protected Shader Shader;
     protected Transformacao4D Matriz = new();
     public Matrix4? Model;
-    
-    public void AdicionarPonto(PontoCoordenada pontoCoordenada)
+
+    protected void AdicionarPonto(PontoCoordenada pontoCoordenada)
     {
         PontoCoordenadas.Add(pontoCoordenada);
     }
